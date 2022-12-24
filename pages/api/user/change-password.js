@@ -1,11 +1,13 @@
-import { unstable_getServerSession } from "next-auth";
+// import { unstable_getServerSession } from "next-auth/next";
+import { getSession } from "next-auth/react";
 import { comparePasswords, hashPassword } from "../../../lib/auth";
 import { connectToDatabase } from "../../../lib/db";
-import { authOptions } from "../auth/[...nextauth]";
 
 async function changePasswordHandler(req, res) {
     if (req.method === 'PATCH') {
-        const session = await unstable_getServerSession(req, res, authOptions);
+        // const session = await unstable_getServerSession(req, res, authOptions);
+        const session = await getSession({ req: req });
+        console.log(session);
         if (!session) {
             res.status(401).json({ message: "Not authenticated!" });
             return;
@@ -25,7 +27,7 @@ async function changePasswordHandler(req, res) {
             return;
         }
         const currentHashedPassword = userDocument.password;
-        const passwordsMatch = comparePasswords(oldPassword, currentHashedPassword);
+        const passwordsMatch = await comparePasswords(oldPassword, currentHashedPassword);
         if (!passwordsMatch) {
             mongoClient.close();
             res.status(403).json({ message: "Old password was incorrect!" });

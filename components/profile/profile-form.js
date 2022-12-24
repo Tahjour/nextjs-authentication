@@ -4,14 +4,26 @@ import classes from './profile-form.module.css';
 function ProfileForm() {
     const newPasswordRef = useRef();
     const oldPasswordRef = useRef();
-    function profileFormHandler(event) {
+    async function profileFormHandler(event) {
         event.preventDefault();
         const enteredNewPassword = newPasswordRef.current.value;
-        const oldPassword = oldPasswordRef.current.value;
-        
+        const enteredOldPassword = oldPasswordRef.current.value;
+        const response = await fetch("/api/user/change-password", {
+            method: 'PATCH',
+            body: JSON.stringify({
+                oldPassword: enteredOldPassword,
+                newPassword: enteredNewPassword
+            }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        const jsonData = await response.json();
+        console.log(jsonData);
+
     }
     return (
-        <form className={classes.form}>
+        <form className={classes.form} onSubmit={profileFormHandler}>
             <div className={classes.control}>
                 <label htmlFor='new-password'>New Password</label>
                 <input type='password' id='new-password' ref={newPasswordRef} />

@@ -26,6 +26,8 @@ function AuthForm() {
             });
             if (!result.error) {
                 router.replace('/profile');
+            } else {
+                console.log(result.error);
             }
         } else {
             // sign up / create user
